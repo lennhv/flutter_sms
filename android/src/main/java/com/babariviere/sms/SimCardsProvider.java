@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.util.Log;
 
 import com.babariviere.sms.permisions.Permissions;
 import com.babariviere.sms.telephony.TelephonyManager;
@@ -26,6 +27,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
     private PluginRegistry.Registrar registrar;
     private MethodChannel.Result result;
     static Context context;
+    String TAG ="SimCardsHandler";
 
     SimCardsHandler(PluginRegistry.Registrar registrar, MethodChannel.Result result) {
         this.registrar = registrar;
@@ -67,6 +69,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
         try {
             TelephonyManager telephonyManager = new TelephonyManager(context);
             int phoneCount = telephonyManager.getSimCount();
+            Log.d(TAG, "Phone Count: " + phoneCount);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                 SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
@@ -74,6 +77,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                 activeSubscriptionInfoCountMax = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCountMax() : 0;
 
                 List<SubscriptionInfo> subscriptionCardsInfo = subscriptionManager.getActiveSubscriptionInfoList();
+                Log.d(TAG, "Cards info: " + subscriptionCardsInfo.size() );
                 for (SubscriptionInfo subscriptionInfo : subscriptionCardsInfo) {
                     JSONObject simCard = new JSONObject();
                     int simSlotIndex = subscriptionInfo.getSimSlotIndex();
@@ -94,7 +98,6 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                     simCards.put(simCard);
                 }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
             result.error("2", e.getMessage(), null);

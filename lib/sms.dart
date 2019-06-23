@@ -524,7 +524,7 @@ class SimCard {
   String countryCode;
   int dataRoaming; // 1 is enabled ; 0 is disabled
   String displayName;
-  int serialNumber;
+  String serialNumber;
   int mcc;
   int mnc;
   String phoneNumber;
