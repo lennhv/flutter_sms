@@ -514,11 +514,22 @@ enum SimCardState {
   Ready,
 }
 
+
 /// Represents a device's sim card info
 class SimCard {
   int slot;
   String imei;
   SimCardState state;
+  String carrierName;
+  String countryCode;
+  int dataRoaming; // 1 is enabled ; 0 is disabled
+  String displayName;
+  int serialNumber;
+  int mcc;
+  int mnc;
+  String phoneNumber;
+  bool isNetworkRoaming;
+  int subscriptionId;
 
   SimCard({
     @required this.slot,
@@ -533,6 +544,36 @@ class SimCard {
     }
     if (map.containsKey('imei')) {
       this.imei = map['imei'];
+    }
+    if (map.containsKey('carrierName')) {
+      this.carrierName = map['carrierName'];
+    }
+    if (map.containsKey('countryCode')) {
+      this.countryCode = map['countryCode'];
+    }
+    if (map.containsKey('dataRoaming')) {
+      this.dataRoaming = map['dataRoaming'];
+    }
+    if (map.containsKey('displayName')) {
+      this.displayName = map['displayName'];
+    }
+    if (map.containsKey('serialNumber')) {
+      this.serialNumber = map['serialNumber'];
+    }
+    if (map.containsKey('mcc')) {
+      this.mcc = map['mcc'];
+    }
+    if (map.containsKey('mnc')) {
+      this.mnc = map['mnc'];
+    }
+    if (map.containsKey('phoneNumber')) {
+      this.phoneNumber = map['phoneNumber'];
+    }
+    if (map.containsKey('isNetworkRoaming')) {
+      this.isNetworkRoaming = map['isNetworkRoaming'];
+    }
+    if (map.containsKey('subscriptionId')) {
+      this.subscriptionId = map['subscriptionId'];
     }
     if (map.containsKey('state')) {
       switch(map['state']) {

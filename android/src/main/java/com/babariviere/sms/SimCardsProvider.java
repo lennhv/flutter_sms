@@ -82,7 +82,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                     simCard.put("countryCode", subscriptionInfo.getCountryIso());
                     simCard.put("dataRoaming", subscriptionInfo.getDataRoaming()); // 1 is enabled ; 0 is disabled
                     simCard.put("displayName", subscriptionInfo.getDisplayName().toString());
-                    simCard.put("simSerialNumber", subscriptionInfo.getIccId());
+                    simCard.put("serialNumber", subscriptionInfo.getIccId());
                     simCard.put("mcc", subscriptionInfo.getMcc());
                     simCard.put("mnc", subscriptionInfo.getMnc());
                     simCard.put("phoneNumber", subscriptionInfo.getNumber());
