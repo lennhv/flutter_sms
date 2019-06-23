@@ -5,6 +5,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
 
 import com.babariviere.sms.permisions.Permissions;
 import com.babariviere.sms.telephony.TelephonyManager;
@@ -12,6 +14,8 @@ import com.babariviere.sms.telephony.TelephonyManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -21,6 +25,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
     private final String[] permissionsList = new String[]{Manifest.permission.READ_PHONE_STATE};
     private PluginRegistry.Registrar registrar;
     private MethodChannel.Result result;
+    static Context context;
 
     SimCardsHandler(PluginRegistry.Registrar registrar, MethodChannel.Result result) {
         this.registrar = registrar;
@@ -54,18 +59,40 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
     }
 
     private void getSimCards() {
+        context = registrar.context();
         JSONArray simCards = new JSONArray();
+        Integer activeSubscriptionInfoCount = null;
+        Integer activeSubscriptionInfoCountMax = null;
 
         try {
-            TelephonyManager telephonyManager = new TelephonyManager(registrar.context());
+            TelephonyManager telephonyManager = new TelephonyManager(context);
             int phoneCount = telephonyManager.getSimCount();
-            for (int i = 0; i < phoneCount; i++) {
-                JSONObject simCard = new JSONObject();
-                simCard.put("slot", i + 1);
-                simCard.put("imei", telephonyManager.getSimId(i));
-                simCard.put("state", telephonyManager.getSimState(i));
-                simCards.put(simCard);
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+                SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+                activeSubscriptionInfoCount = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCount() : 0;
+                activeSubscriptionInfoCountMax = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCountMax() : 0;
+
+                List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
+                for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
+                    JSONObject simCard = new JSONObject();
+                    int simSlotIndex = subscriptionInfo.getSimSlotIndex();
+                    simCard.put("slot", simSlotIndex);
+                    simCard.put("carrierName", subscriptionInfo.getCarrierName().toString());
+                    simCard.put("countryCode", subscriptionInfo.getCountryIso());
+                    simCard.put("dataRoaming", subscriptionInfo.getDataRoaming()); // 1 is enabled ; 0 is disabled
+                    simCard.put("displayName", subscriptionInfo.getDisplayName().toString());
+                    simCard.put("simSerialNumber", subscriptionInfo.getIccId());
+                    simCard.put("mcc", subscriptionInfo.getMcc());
+                    simCard.put("mnc", subscriptionInfo.getMnc());
+                    simCard.put("phoneNumber", subscriptionInfo.getNumber());
+                    simCard.put("isNetworkRoaming", subscriptionManager.isNetworkRoaming(simSlotIndex));
+                    simCard.put("subscriptionId", subscriptionInfo.getSubscriptionId());
+                    simCard.put("imei", telephonyManager.getSimId(simSlotIndex));
+                    simCard.put("state", telephonyManager.getSimState(simSlotIndex));
+                }
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
             result.error("2", e.getMessage(), null);

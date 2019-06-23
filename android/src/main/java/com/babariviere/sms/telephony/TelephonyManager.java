@@ -22,7 +22,11 @@ public class TelephonyManager {
     }
 
     public String getSimId(int slotId) {
-        return this.getManager().getDeviceId(slotId);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            return this.getManager().getDeviceId(slotId);
+        } else {
+            return null;
+        }
     }
 
 
