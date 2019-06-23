@@ -90,6 +90,8 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                     simCard.put("subscriptionId", subscriptionInfo.getSubscriptionId());
                     simCard.put("imei", telephonyManager.getSimId(simSlotIndex));
                     simCard.put("state", telephonyManager.getSimState(simSlotIndex));
+
+                    simCards.put(simCard);
                 }
             }
 
