@@ -20,6 +20,7 @@ class SimCardsBloc {
   void loadSimCards() async {
     _simCards = await _simCardsProvider.getSimCards();
     _simCards.forEach((sim) {
+      print("sim $sim");
       if (sim.state == SimCardState.Ready) {
         this.selectSimCard(sim);
       }

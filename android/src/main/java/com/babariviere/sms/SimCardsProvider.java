@@ -69,7 +69,7 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
         try {
             TelephonyManager telephonyManager = new TelephonyManager(context);
             int phoneCount = telephonyManager.getSimCount();
-            Log.d(TAG, "Phone Count: " + phoneCount);
+            Log.d(TAG, "sims Found: " + phoneCount);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
                 SubscriptionManager subscriptionManager = (SubscriptionManager) context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
@@ -77,11 +77,11 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                 activeSubscriptionInfoCountMax = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCountMax() : 0;
 
                 List<SubscriptionInfo> subscriptionCardsInfo = subscriptionManager.getActiveSubscriptionInfoList();
-                Log.d(TAG, "Cards info: " + subscriptionCardsInfo.size() );
+                Log.d(TAG, "Cards info available: " + subscriptionCardsInfo.size() );
                 for (SubscriptionInfo subscriptionInfo : subscriptionCardsInfo) {
                     JSONObject simCard = new JSONObject();
                     int simSlotIndex = subscriptionInfo.getSimSlotIndex();
-                    simCard.put("slot", simSlotIndex);
+                    simCard.put("slot", simSlotIndex+1);
                     simCard.put("carrierName", subscriptionInfo.getCarrierName().toString());
                     simCard.put("countryCode", subscriptionInfo.getCountryIso());
                     simCard.put("dataRoaming", subscriptionInfo.getDataRoaming()); // 1 is enabled ; 0 is disabled
@@ -89,11 +89,15 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                     simCard.put("serialNumber", subscriptionInfo.getIccId());
                     simCard.put("mcc", subscriptionInfo.getMcc());
                     simCard.put("mnc", subscriptionInfo.getMnc());
-                    simCard.put("phoneNumber", subscriptionInfo.getNumber());
                     simCard.put("isNetworkRoaming", subscriptionManager.isNetworkRoaming(simSlotIndex));
                     simCard.put("subscriptionId", subscriptionInfo.getSubscriptionId());
                     simCard.put("imei", telephonyManager.getSimId(simSlotIndex));
                     simCard.put("state", telephonyManager.getSimState(simSlotIndex));
+                    String phoneNumber = subscriptionInfo.getNumber();
+                    if (phoneNumber == null){
+                        phoneNumber = "";
+                    }
+                    simCard.put("phoneNumber", phoneNumber);
 
                     simCards.put(simCard);
                 }

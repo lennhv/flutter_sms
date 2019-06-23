@@ -598,6 +598,13 @@ class SimCard {
       }
     }
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return "Card<Slot: $slot PhoneNumber: $phoneNumber "
+        "imei: $imei state: $state serial: $serialNumber >";
+  }
 }
 
 class SimCardsProvider {
