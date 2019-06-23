@@ -73,8 +73,8 @@ class SimCardsHandler implements PluginRegistry.RequestPermissionsResultListener
                 activeSubscriptionInfoCount = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCount() : 0;
                 activeSubscriptionInfoCountMax = subscriptionManager != null ? subscriptionManager.getActiveSubscriptionInfoCountMax() : 0;
 
-                List<SubscriptionInfo> subscriptionInfos = subscriptionManager.getActiveSubscriptionInfoList();
-                for (SubscriptionInfo subscriptionInfo : subscriptionInfos) {
+                List<SubscriptionInfo> subscriptionCardsInfo = subscriptionManager.getActiveSubscriptionInfoList();
+                for (SubscriptionInfo subscriptionInfo : subscriptionCardsInfo) {
                     JSONObject simCard = new JSONObject();
                     int simSlotIndex = subscriptionInfo.getSimSlotIndex();
                     simCard.put("slot", simSlotIndex);
